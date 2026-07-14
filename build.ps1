@@ -67,6 +67,11 @@ switch ($Lang) {
         Write-Host "[Dart] Compiling $name..."
         dart compile exe (Join-Path $Root "dart\main.dart") -o (Join-Path $Dist $name) 2>&1 | Out-Null
     }
+    "java" {
+        $name = "sorting-sins-java-$HostOS.java"
+        Write-Host "[Java] Copying to dist\$name..."
+        Copy-Item -Path (Join-Path $Root "java\Main.java") -Destination (Join-Path $Dist $name)
+    }
     "csharp" {
         $rid = switch ($HostOS) {
             "windows" { "win-x64" }
@@ -87,9 +92,10 @@ switch ($Lang) {
         & $MyInvocation.MyCommand.Path -Lang "go"
         & $MyInvocation.MyCommand.Path -Lang "rust"
         & $MyInvocation.MyCommand.Path -Lang "dart"
+        & $MyInvocation.MyCommand.Path -Lang "java"
         & $MyInvocation.MyCommand.Path -Lang "csharp"
     }
     default {
-        Write-Host "Usage: build.ps1 [-Lang <js|python|cpp|go|rust|dart|csharp|all>]"
+        Write-Host "Usage: build.ps1 [-Lang <js|python|cpp|go|rust|dart|java|csharp|all>]"
     }
 }
