@@ -61,14 +61,28 @@ switch ($Lang) {
             Copy-Item -Path (Join-Path $Root "rust\target\$target\release\sorting-sins$ext") -Destination (Join-Path $Dist $name) -ErrorAction SilentlyContinue
         }
     }
+    "csharp" {
+        $rid = switch ($HostOS) {
+            "windows" { "win-x64" }
+            "linux"   { "linux-x64" }
+            "darwin"  { "osx-x64" }
+        }
+        $ext = Get-Ext -os $HostOS
+        $name = "sorting-sins-csharp-$HostOS$ext"
+        Write-Host "[C#] Compiling $name..."
+        dotnet publish (Join-Path $Root "csharp") -c Release -o (Join-Path $Dist "temp") -r $rid --self-contained 2>&1 | Out-Null
+        Copy-Item -Path (Join-Path $Dist "temp\sorting-sins$ext") -Destination (Join-Path $Dist $name)
+        Remove-Item -Recurse -Force (Join-Path $Dist "temp")
+    }
     "all" {
         & $MyInvocation.MyCommand.Path -Lang "js"
         & $MyInvocation.MyCommand.Path -Lang "python"
         & $MyInvocation.MyCommand.Path -Lang "cpp"
         & $MyInvocation.MyCommand.Path -Lang "go"
         & $MyInvocation.MyCommand.Path -Lang "rust"
+        & $MyInvocation.MyCommand.Path -Lang "csharp"
     }
     default {
-        Write-Host "Usage: build.ps1 [-Lang <js|python|cpp|go|rust|all>]"
+        Write-Host "Usage: build.ps1 [-Lang <js|python|cpp|go|rust|csharp|all>]"
     }
 }
