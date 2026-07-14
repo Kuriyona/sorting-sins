@@ -54,11 +54,24 @@ switch ($Lang) {
             Write-Host "[Rust] Skipping $HostOS (target '$target' not installed)"
         } else {
             $ext = Get-Ext -os $HostOS
-            $name = "sorting-sins-rust-$HostOS$ext"
-            Write-Host "[Rust] Compiling $name (target: $target)..."
+
+            # Build with latest toolchain
+            $nameLatest = "sorting-sins-rust_latest-$target$ext"
+            Write-Host "[Rust] Compiling $nameLatest (toolchain: latest)..."
             cargo build --release --target $target --manifest-path (Join-Path $Root "rust\Cargo.toml") 2>&1 | Out-Null
-            Copy-Item -Path (Join-Path $Root "rust\target\$target\release\sorting-sins.exe") -Destination (Join-Path $Dist $name) -ErrorAction SilentlyContinue
-            Copy-Item -Path (Join-Path $Root "rust\target\$target\release\sorting-sins$ext") -Destination (Join-Path $Dist $name) -ErrorAction SilentlyContinue
+            Copy-Item -Path (Join-Path $Root "rust\target\$target\release\sorting-sins$ext") -Destination (Join-Path $Dist $nameLatest) -ErrorAction SilentlyContinue
+
+            # Build with Rust 1.80.0
+            $nameOld = "sorting-sins-rust_v1.80.0-$target$ext"
+            if (rustup toolchain list 2>$null | Select-String -Quiet "1.80.0") {
+                Write-Host "[Rust] Compiling $nameOld (toolchain: 1.80.0)..."
+                cargo +1.80.0 build --release --target $target --manifest-path (Join-Path $Root "rust\Cargo.toml") 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    Copy-Item -Path (Join-Path $Root "rust\target\$target\release\sorting-sins$ext") -Destination (Join-Path $Dist $nameOld) -ErrorAction SilentlyContinue
+                }
+            } else {
+                Write-Host "[Rust] Warning: toolchain 1.80.0 not installed, skipping $nameOld"
+            }
         }
     }
     "dart" {
