@@ -9,23 +9,23 @@
 
 | 语言 | 行为 |
 |------|---------|
-| **C++** | 随机排列 |
-| **Python** | 随机排列 |
-| **JavaScript (Node.js)** | 随机排列 |
-| **JavaScript (Bun)** | 随机排列 |
-| **JavaScript (Deno)** | 随机排列 |
-| **Dart** | 随机排列 |
-| **Java** | 随机排列 |
-| **Go** | 随机排列 |
-| **C#** | 随机排列 |
+| **C++** | （疑似）随机排列 |
+| **Python** | （疑似）随机排列 |
+| **JavaScript (Node.js)** | （疑似）随机排列 |
+| **JavaScript (Bun)** | （疑似）随机排列 |
+| **JavaScript (Deno)** | （疑似）随机排列 |
+| **Dart** | （疑似）随机排列 |
+| **Java** | （疑似）随机排列 |
+| **Go** | （疑似）随机排列 |
+| **C#** | （疑似）随机排列 |
 | **Rust** | **panic** |
 
 ## 结论
 
-- **C++、Python、JavaScript、Dart、Java、Go、C#** —— 尽管比较器违反了排序算法的契约（非自反、非传递、不一致），这些语言的 sort 实现仍然「容忍」了错误，默默地输出一个看似随机排列的结果，且从不报错。
-- **Rust** —— 在标准库的排序实现内部主动检测到比较器违反了 total order 约束，直接 **panic** 并报错：`user-provided comparison function does not correctly implement a total order`。Rust 是唯一一个在运行期对这种未定义行为进行安全检查的语言。
+- **C++、Python、JavaScript、Dart、Java、Go、C#** —— 尽管比较器违反了排序契约（非自反、非传递、不一致），这些语言的 sort 实现未进行运行期检查，静默返回结果。从输出形态观察，每次运行的结果都疑似随机排列，但未经严格的统计检验确认。
+- **Rust** —— 代码可以正常通过编译，但标准库的排序实现在运行期主动检测到比较器违反 total order 约束，直接 **panic** 并报错：`user-provided comparison function does not correctly implement a total order`。Rust 是唯一在运行期对这种未定义行为进行安全检查的语言。
 
-这反映了各语言设计哲学的不同：C++/Python/JS/Dart/Java/Go/C# 倾向于信任开发者并尽可能返回结果（哪怕结果是错的），而 Rust 则在检测到契约被违反时立即终止程序，帮助开发者尽早发现问题。
+作者计划在未来对非 panic 语言的输出结果进行更深入的统计分析，以进一步探究随机比较器在不同排序算法实现中的实际行为特征与潜在偏差。
 
 ## 运行方式
 

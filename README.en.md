@@ -9,23 +9,23 @@ Eight languages implement the same logic: generate array `[0, 1, 2, ..., 99]`, t
 
 | Language | Behavior |
 |----------|----------|
-| **C++** | shuffled |
-| **Python** | shuffled |
-| **JavaScript (Node.js)** | shuffled |
-| **JavaScript (Bun)** | shuffled |
-| **JavaScript (Deno)** | shuffled |
-| **Dart** | shuffled |
-| **Java** | shuffled |
-| **Go** | shuffled |
-| **C#** | shuffled |
+| **C++** | apparently shuffled |
+| **Python** | apparently shuffled |
+| **JavaScript (Node.js)** | apparently shuffled |
+| **JavaScript (Bun)** | apparently shuffled |
+| **JavaScript (Deno)** | apparently shuffled |
+| **Dart** | apparently shuffled |
+| **Java** | apparently shuffled |
+| **Go** | apparently shuffled |
+| **C#** | apparently shuffled |
 | **Rust** | **panic** |
 
 ## Conclusion
 
-- **C++, Python, JavaScript, Dart, Java, Go, C#** — despite the comparator violating the sorting contract (non-reflexive, non-transitive, inconsistent), these languages' sort implementations silently tolerate the error and produce a seemingly random permutation, never reporting any issue.
-- **Rust** — the standard library's sort implementation actively detects that the comparator violates the total order constraint and **panics** with: `user-provided comparison function does not correctly implement a total order`. Rust is the only language that performs a safety check against this undefined behavior at runtime.
+- **C++, Python, JavaScript, Dart, Java, Go, C#** — these languages' sort implementations perform no runtime checking when the comparator violates the sorting contract (non-reflexive, non-transitive, inconsistent). They silently produce output that appears to be a random permutation, though this has not been rigorously verified through statistical testing.
+- **Rust** — the code compiles without error, but at runtime the standard library's sort implementation actively detects that the comparator violates the total order constraint and **panics** with: `user-provided comparison function does not correctly implement a total order`. Rust is the only language that performs a runtime safety check against this undefined behavior.
 
-This reflects different design philosophies: C++/Python/JS/Dart/Java/Go/C# trust the developer and try to return a result (even if wrong), while Rust terminates the program when a contract is violated, helping developers catch bugs early.
+The author plans to conduct further statistical analysis on the non-panic languages in future work, to gain deeper insight into how random comparators behave across different sorting algorithm implementations and to identify any potential biases.
 
 ## How to Run
 
