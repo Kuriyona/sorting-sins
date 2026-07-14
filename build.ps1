@@ -61,6 +61,12 @@ switch ($Lang) {
             Copy-Item -Path (Join-Path $Root "rust\target\$target\release\sorting-sins$ext") -Destination (Join-Path $Dist $name) -ErrorAction SilentlyContinue
         }
     }
+    "dart" {
+        $ext = Get-Ext -os $HostOS
+        $name = "sorting-sins-dart-$HostOS$ext"
+        Write-Host "[Dart] Compiling $name..."
+        dart compile exe (Join-Path $Root "dart\main.dart") -o (Join-Path $Dist $name) 2>&1 | Out-Null
+    }
     "csharp" {
         $rid = switch ($HostOS) {
             "windows" { "win-x64" }
@@ -80,9 +86,10 @@ switch ($Lang) {
         & $MyInvocation.MyCommand.Path -Lang "cpp"
         & $MyInvocation.MyCommand.Path -Lang "go"
         & $MyInvocation.MyCommand.Path -Lang "rust"
+        & $MyInvocation.MyCommand.Path -Lang "dart"
         & $MyInvocation.MyCommand.Path -Lang "csharp"
     }
     default {
-        Write-Host "Usage: build.ps1 [-Lang <js|python|cpp|go|rust|csharp|all>]"
+        Write-Host "Usage: build.ps1 [-Lang <js|python|cpp|go|rust|dart|csharp|all>]"
     }
 }
