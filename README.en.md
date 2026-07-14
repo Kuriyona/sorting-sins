@@ -24,6 +24,7 @@ Eight languages implement the same logic: generate array `[0, 1, 2, ..., 99]`, t
 
 - **C++, Python, JavaScript, Dart, Java, Go, C#** — these languages' sort implementations perform no runtime checking when the comparator violates the sorting contract (non-reflexive, non-transitive, inconsistent). They silently produce output that appears to be a random permutation, though this has not been rigorously verified through statistical testing.
 - **Rust** — the code compiles without error, but at runtime the standard library's sort implementation actively detects that the comparator violates the total order constraint and **panics** with: `user-provided comparison function does not correctly implement a total order`. Rust is the only language that performs a runtime safety check against this undefined behavior.
+  - During a discussion with a friend ([LaunchPad](https://github.com/LaunchPad001)), we discovered that Rust in earlier versions (e.g., 1.75.0) does not panic — it instead outputs what appears to be a random permutation. The behavioral differences between Rust versions will be investigated in future work.
 
 The author plans to conduct further statistical analysis on the non-panic languages in future work, to gain deeper insight into how random comparators behave across different sorting algorithm implementations and to identify any potential biases.
 

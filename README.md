@@ -24,6 +24,7 @@
 
 - **C++、Python、JavaScript、Dart、Java、Go、C#** —— 尽管比较器违反了排序契约（非自反、非传递、不一致），这些语言的 sort 实现未进行运行期检查，静默返回结果。从输出形态观察，每次运行的结果都疑似随机排列，但未经严格的统计检验确认。
 - **Rust** —— 代码可以正常通过编译，但标准库的排序实现在运行期主动检测到比较器违反 total order 约束，直接 **panic** 并报错：`user-provided comparison function does not correctly implement a total order`。Rust 是唯一在运行期对这种未定义行为进行安全检查的语言。
+  - 在与朋友（[LaunchPad](https://github.com/LaunchPad001)）的讨论中发现，Rust 在早期版本（如 1.75.0）并不会 panic，而是输出一个看似随机的排列，将在后续研究中进一步探究 Rust 版本间的行为差异。
 
 作者计划在未来对非 panic 语言的输出结果进行更深入的统计分析，以进一步探究随机比较器在不同排序算法实现中的实际行为特征与潜在偏差。
 
