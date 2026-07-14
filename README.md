@@ -13,6 +13,7 @@
 | **Python** | 随机排列 |
 | **JavaScript (Node.js)** | 随机排列 |
 | **JavaScript (Bun)** | 随机排列 |
+| **JavaScript (Deno)** | 随机排列 |
 | **Go** | 随机排列 |
 | **C#** | 随机排列 |
 | **Rust** | **panic** |

@@ -13,6 +13,7 @@ Six languages implement the same logic: generate array `[0, 1, 2, ..., 99]`, the
 | **Python** | shuffled |
 | **JavaScript (Node.js)** | shuffled |
 | **JavaScript (Bun)** | shuffled |
+| **JavaScript (Deno)** | shuffled |
 | **Go** | shuffled |
 | **C#** | shuffled |
 | **Rust** | **panic** |
