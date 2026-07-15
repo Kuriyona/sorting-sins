@@ -1,31 +1,27 @@
-
 # Sorting Sins
 
 A multi-language demo project that demonstrates the same "sorting sin" — using a non-deterministic comparator (random comparison function) in sorting.
 
 ## Observations
 
-Eight languages implement the same logic: generate array `[0, 1, 2, ..., 99]`, then sort it with a random comparator. Each language was run 3 times:
+Multiple languages implement the same logic: generate array `[0, 1, 2, ..., N-1]`, then sort it with a random comparator. First tested at N=100, then scaled to one million (N=1,000,000). Results:
 
-| Language | Behavior |
-|----------|----------|
-| **C++** | apparently shuffled |
-| **Python** | apparently shuffled |
-| **JavaScript (Node.js)** | apparently shuffled |
-| **JavaScript (Bun)** | apparently shuffled |
-| **JavaScript (Deno)** | apparently shuffled |
-| **Dart** | apparently shuffled |
-| **Java** | apparently shuffled |
-| **Go** | apparently shuffled |
-| **C#** | apparently shuffled |
-| **Rust (latest)** | **panic** |
-| **Rust (v1.80.0)** | apparently shuffled |
+| Language                              | Behavior                                     |
+| ------------------------------------- | -------------------------------------------- |
+| **C++(Clang)**                        | shuffled                                     |
+| **Python**                            | shuffled                                     |
+| **JavaScript (Node.js / Bun / Deno)** | shuffled                                     |
+| **Dart**                              | shuffled                                     |
+| **Go**                                | shuffled                                     |
+| **Java**                              | shuffled at N=100, **throws** at N=1,000,000 |
+| **C#**                                | shuffled at N=100, **throws** at N=1,000,000 |
+| **Rust**                              | **panic** (both scales)                      |
 
 ## Conclusion
 
-- **C++, Python, JavaScript, Dart, Java, Go, C#** — these languages' sort implementations perform no runtime checking when the comparator violates the sorting contract (non-reflexive, non-transitive, inconsistent). They silently produce output that appears to be a random permutation, though this has not been rigorously verified through statistical testing.
-- **Rust (latest)** — the code compiles without error, but the standard library's sort implementation (since v1.81.0) detects the comparator is not a total order at runtime and **panics**. Among the languages tested in this repository, Rust is the only one that performs a runtime safety check against this undefined behavior.
-- **Rust (v1.80.0)** — the older sort implementations did not panic within the limited scope of this project's testing, and instead output what appears to be a random permutation.
+- **C++, Python, JavaScript, Dart, Go** — no runtime checking at either N=100 or N=1,000,000. The sort implementations silently return a randomly shuffled result.
+- **Java, C#** — pass silently at N=100, but when scaled to N=1,000,000 the sorting algorithm (Java TimSort, C# `Array.Sort`) detects the invalid comparator and **throws an exception**. This demonstrates that detection capability is data-size-dependent; small inputs may not trigger the internal consistency checks.
+- **Rust** — the code compiles without error, but the standard library's sort implementation detects comparator inconsistency at runtime and **panics** at both N=100 and N=1,000,000 (since v1.81.0).
 
 The author plans to conduct further statistical analysis on the non-panic languages in future work, to gain deeper insight into how random comparators behave across different sorting algorithm implementations and to identify any potential biases.
 
@@ -37,10 +33,10 @@ Later, another friend [lfcypo](https://github.com/lfcypo) provided the exact ver
 
 The panic behavior of Rust's sort in this demo is version-dependent, with two key PRs shaping the current behavior:
 
-| PR | PR Summary | Merged | Released |
-|----|-------------|--------|----------|
+| PR                                                       | PR Summary                                                                                                                                                                                                                                                       | Merged       | Released    |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ----------- |
 | [#124032](https://github.com/rust-lang/rust/pull/124032) | Replace sort implementations — introduced **driftsort** (`slice::sort`) and **ipnsort** (`slice::sort_unstable`). The new implementations actively detect **strict weak ordering** violations and panic, whereas the old Timsort/pdqsort did not reliably do so. | Jun 21, 2024 | Rust 1.81.0 |
-| [#128273](https://github.com/rust-lang/rust/pull/128273) | Improve Ord violation help — refined the panic message to `user-provided comparison function does not correctly implement a total order` and improved documentation. | Aug 11, 2024 | Rust 1.81.0 |
+| [#128273](https://github.com/rust-lang/rust/pull/128273) | Improve Ord violation help — refined the panic message to `user-provided comparison function does not correctly implement a total order` and improved documentation.                                                                                             | Aug 11, 2024 | Rust 1.81.0 |
 
 **Change description**: The new implementations added runtime consistency checks; for many comparators that violate total order, they will proactively panic, whereas the old sort implementations typically did not perform such checks.
 
@@ -64,36 +60,43 @@ The panic behavior of Rust's sort in this demo is version-dependent, with two ke
 .\build.ps1 -Lang csharp # build C# only
 ```
 
+> All languages accept an optional `N` argument (data size, default 100). E.g., `node ./js/main.js 1000000`.
+
 ### JavaScript
 
 ```shell
-node ./js/main.js  # Node.js
-bun ./js/main.js   # Bun.js
-deno ./js/main.js  # Deno.js
+node ./js/main.js        # Node.js (default N=100)
+node ./js/main.js 1000000
+bun ./js/main.js         # Bun.js
+deno ./js/main.js        # Deno.js
 ```
 
 ### Dart
 
 ```shell
-dart run ./dart/main.dart
+dart run ./dart/main.dart        # default N=100
+dart run ./dart/main.dart 1000000
 ```
 
 ### Java
 
 ```shell
-java ./java/Main.java       # Java 11+ (source-file mode)
+java ./java/Main.java            # Java 11+, default N=100
+java ./java/Main.java 1000000
 ```
 
 ### Python
 
 ```shell
-python ./python/main.py
+python ./python/main.py          # default N=100
+python ./python/main.py 1000000
 ```
 
 ### Golang
 
 ```shell
-go run ./go/main.go
+go run ./go/main.go              # default N=100
+go run ./go/main.go 1000000
 # or build
 go build -o ./dist/go ./go/main.go
 ```
@@ -102,26 +105,29 @@ go build -o ./dist/go ./go/main.go
 
 ```shell
 clang++ ./cpp/main.cpp -o ./dist/cpp
+./dist/cpp                       # default N=100
+./dist/cpp 1000000
 ```
 
 ### C#
 
 ```shell
-dotnet run --project ./csharp
-# or build & run
-dotnet run --project ./csharp -c Release
+dotnet run --project ./csharp            # default N=100
+dotnet run --project ./csharp -- 1000000
 ```
 
 ### Rust
 
 ```shell
 # Latest Rust (≥1.81.0) — found to panic in testing
-cargo run --manifest-path ./rust/Cargo.toml
+cargo run --manifest-path ./rust/Cargo.toml              # default N=100
+cargo run --manifest-path ./rust/Cargo.toml -- 1000000
 
 # Rust 1.80.0 — no panic found in limited testing
 cargo +1.80.0 run --manifest-path ./rust/Cargo.toml
 
 # or build
 cargo build --release --manifest-path ./rust/Cargo.toml
-./rust/target/release/sorting-sins
+./rust/target/release/sorting-sins                       # default N=100
+./rust/target/release/sorting-sins 1000000
 ```

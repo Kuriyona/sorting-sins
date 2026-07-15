@@ -3,11 +3,17 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"sort"
+	"strconv"
 )
 
 func main() {
-	arr := make([]int, 100)
+	n := 100
+	if len(os.Args) > 1 {
+		n, _ = strconv.Atoi(os.Args[1])
+	}
+	arr := make([]int, n)
 	for i := range arr {
 		arr[i] = i
 	}
@@ -16,5 +22,9 @@ func main() {
 		return rand.Intn(2) == 0
 	})
 
-	fmt.Println(arr)
+	k := 100
+	if k > len(arr) {
+		k = len(arr)
+	}
+	fmt.Println(arr[:k])
 }

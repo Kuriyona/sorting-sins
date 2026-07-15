@@ -6,14 +6,14 @@ Multi-language demo showing what happens when sort comparators are non-determini
 
 Each language is a **single-file standalone program** (except Rust/C# which have minimal manifests):
 
-| Language  | Entrypoint              | Run command                                    |
-|-----------|-------------------------|------------------------------------------------|
-| JavaScript| `js/main.js`            | `node ./js/main.js` (also bun, deno)           |
-| Python    | `python/main.py`        | `python ./python/main.py`                      |
-| C++       | `cpp/main.cpp`          | `clang++ ./cpp/main.cpp -o ./dist/cpp && ./dist/cpp` |
-| Go        | `go/main.go`            | `go run ./go/main.go`                          |
-| C#        | `csharp/Program.cs`     | `dotnet run --project ./csharp`                |
-| Rust      | `rust/src/main.rs`      | `cargo run --manifest-path ./rust/Cargo.toml`  |
+| Language   | Entrypoint          | Run command                                          |
+| ---------- | ------------------- | ---------------------------------------------------- |
+| JavaScript | `js/main.js`        | `node ./js/main.js` (also bun, deno)                 |
+| Python     | `python/main.py`    | `python ./python/main.py`                            |
+| C++        | `cpp/main.cpp`      | `clang++ ./cpp/main.cpp -o ./dist/cpp && ./dist/cpp` |
+| Go         | `go/main.go`        | `go run ./go/main.go`                                |
+| C#         | `csharp/Program.cs` | `dotnet run --project ./csharp`                      |
+| Rust       | `rust/src/main.rs`  | `cargo run --manifest-path ./rust/Cargo.toml`        |
 
 ## Build
 

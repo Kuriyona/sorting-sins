@@ -1,7 +1,8 @@
 // Sorting Sins - JavaScript
 
-const arr = Array.from({ length: 100 }, (_, i) => i);
+const n = parseInt(process.argv[2]) || 100;
+const arr = Array.from({ length: n }, (_, i) => i);
 
 arr.sort(() => Math.random() - 0.5);
 
-console.log(arr);
+console.log(arr.slice(0, 100));
