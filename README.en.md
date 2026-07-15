@@ -11,7 +11,6 @@ Multiple languages implement the same logic: generate array `[0, 1, 2, ..., N-1]
 | **C++(Clang)**                        | shuffled                                     |
 | **Python**                            | shuffled                                     |
 | **JavaScript (Node.js / Bun / Deno)** | shuffled                                     |
-| **Dart**                              | shuffled                                     |
 | **Go**                                | shuffled                                     |
 | **Java**                              | shuffled at N=100, **throws** at N=1,000,000 |
 | **C#**                                | shuffled at N=100, **throws** at N=1,000,000 |
@@ -19,7 +18,7 @@ Multiple languages implement the same logic: generate array `[0, 1, 2, ..., N-1]
 
 ## Conclusion
 
-- **C++, Python, JavaScript, Dart, Go** — no runtime checking at either N=100 or N=1,000,000. The sort implementations silently return a randomly shuffled result.
+- **C++, Python, JavaScript, Go** — no runtime checking at either N=100 or N=1,000,000. The sort implementations silently return a randomly shuffled result.
 - **Java, C#** — pass silently at N=100, but when scaled to N=1,000,000 the sorting algorithm (Java TimSort, C# `Array.Sort`) detects the invalid comparator and **throws an exception**. This demonstrates that detection capability is data-size-dependent; small inputs may not trigger the internal consistency checks.
 - **Rust** — the code compiles without error, but the standard library's sort implementation detects comparator inconsistency at runtime and **panics** at both N=100 and N=1,000,000 (since v1.81.0).
 
@@ -54,7 +53,6 @@ The panic behavior of Rust's sort in this demo is version-dependent, with two ke
 .\build.ps1 -Lang python # build Python only
 .\build.ps1 -Lang cpp    # build C++ only
 .\build.ps1 -Lang go     # build Go only
-.\build.ps1 -Lang dart   # build Dart only
 .\build.ps1 -Lang java   # build Java only
 .\build.ps1 -Lang rust   # build Rust only
 .\build.ps1 -Lang csharp # build C# only
@@ -69,13 +67,6 @@ node ./js/main.js        # Node.js (default N=100)
 node ./js/main.js 1000000
 bun ./js/main.js         # Bun.js
 deno ./js/main.js        # Deno.js
-```
-
-### Dart
-
-```shell
-dart run ./dart/main.dart        # default N=100
-dart run ./dart/main.dart 1000000
 ```
 
 ### Java

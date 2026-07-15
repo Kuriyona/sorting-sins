@@ -11,7 +11,6 @@
 | **C++(Clang)**                        | 随机排列                               |
 | **Python**                            | 随机排列                               |
 | **JavaScript (Node.js / Bun / Deno)** | 随机排列                               |
-| **Dart**                              | 随机排列                               |
 | **Go**                                | 随机排列                               |
 | **Java**                              | N=100 随机排列，N=1,000,000 **抛异常** |
 | **C#**                                | N=100 随机排列，N=1,000,000 **抛异常** |
@@ -19,7 +18,7 @@
 
 ## 结论
 
-- **C++、Python、JavaScript、Dart、Go** —— 无论 N=100 还是 N=1,000,000，这些语言的 sort 实现均未进行运行期检查，静默返回被随机打乱的结果。
+- **C++、Python、JavaScript、Go** —— 无论 N=100 还是 N=1,000,000，这些语言的 sort 实现均未进行运行期检查，静默返回被随机打乱的结果。
 - **Java、C#** —— 在 N=100 时静默通过，数据量提升至 N=1,000,000 后，排序算法（Java TimSort、C# `Array.Sort`）检测到比较器违反契约，直接 **抛异常**。这说明检测能力与数据规模相关，小数据量下可能无法触发检查逻辑。
 - **Rust** —— 代码可以正常通过编译，但标准库的排序实现在运行期主动检测到比较器违反 total order 约束，直接 **panic**。无论 N=100 还是 N=1,000,000 均稳定触发。
 
@@ -54,7 +53,6 @@
 .\build.ps1 -Lang python # 仅构建 Python
 .\build.ps1 -Lang cpp    # 仅构建 C++
 .\build.ps1 -Lang go     # 仅构建 Go
-.\build.ps1 -Lang dart   # 仅构建 Dart
 .\build.ps1 -Lang java   # 仅构建 Java
 .\build.ps1 -Lang rust   # 仅构建 Rust
 .\build.ps1 -Lang csharp # 仅构建 C#
@@ -69,13 +67,6 @@ node ./js/main.js        # Node.js（默认 N=100）
 node ./js/main.js 1000000
 bun ./js/main.js         # Bun.js
 deno ./js/main.js        # Deno.js
-```
-
-### Dart
-
-```shell
-dart run ./dart/main.dart        # 默认 N=100
-dart run ./dart/main.dart 1000000
 ```
 
 ### Java
