@@ -8,13 +8,14 @@ Multiple languages implement the same logic: generate array `[0, 1, 2, ..., N-1]
 
 | Language                              | Behavior                                     |
 | ------------------------------------- | -------------------------------------------- |
-| **C++(Clang)**                        | shuffled                                     |
-| **Python**                            | shuffled                                     |
-| **JavaScript (Node.js / Bun / Deno)** | shuffled                                     |
-| **Go**                                | shuffled                                     |
+| **C++(Clang)**                        | seemingly shuffled                           |
+| **Python**                            | seemingly shuffled                           |
+| **JavaScript (Node.js / Bun / Deno)** | seemingly shuffled                           |
+| **Go**                                | seemingly shuffled                           |
 | **Java**                              | shuffled at N=100, **throws** at N=1,000,000 |
 | **C#**                                | shuffled at N=100, **throws** at N=1,000,000 |
-| **Rust**                              | **panic** (both scales)                      |
+| **Rust(latest)**                      | **panic**                                    |
+| **Rust(v1.80.0)**                     | seemingly shuffled                           |
 
 ## Conclusion
 
